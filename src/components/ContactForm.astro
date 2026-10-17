@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+
+const expediciones = (await getCollection('expediciones')).sort((a, b) => a.data.order - b.data.order);
+// Sin endpoint configurado, el formulario abre el cliente de correo del visitante.
+const usesMailto = !site.formAction;
+const action = site.formAction || `mailto:${site.email}`;
+const enctype = usesMailto ? 'text/plain' : undefined;
+---
+
+<form class="form" method="post" action={action} enctype={enctype}>
+  <div class="field">
+    <label for="f-nombre">Nombre</label>
+    <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="f-nombre-error" />
+    <p id="f-nombre-error" class="error">Escribe tu nombre.</p>
+  </div>
+  <div class="field">
+    <label for="f-correo">Correo electrónico</label>
+    <input id="f-correo" name="correo" type="email" autocomplete="email" required aria-describedby="f-correo-error" />
+    <p id="f-correo-error" class="error">Escribe un correo válido, por ejemplo nombre@correo.com.</p>
+  </div>
+  <div class="field">
+    <label for="f-exp">Expedición de interés</label>
+    <select id="f-exp" name="expedicion">
+      {expediciones.map((e) => <option>{e.data.title}</option>)}
+      <option>Aún no lo sé</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="f-msg">Cuéntanos tu experiencia en montaña <span class="optional">(opcional)</span></label>
+    <textarea id="f-msg" name="mensaje" rows="4" aria-describedby="f-msg-hint"></textarea>
+    <p id="f-msg-hint" class="hint">Por ejemplo: montañas que ya subiste, altitud máxima y cómo entrenas hoy.</p>
+  </div>
+  <div class="submit">
+    <button type="submit" class="btn btn-primary">Enviar consulta</button>
+    {usesMailto && <p class="hint">Se abrirá tu aplicación de correo con el mensaje listo para enviar.</p>}
+    {!usesMailto && <p class="hint">Te respondemos en [N] días hábiles.</p>}
+  </div>
+</form>
+
+<style>
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  .submit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .submit .btn {
+    padding-inline: 28px;
+  }
+</style>

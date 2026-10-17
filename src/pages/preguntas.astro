@@ -1,0 +1,180 @@
+---
+import Base from '../layouts/Base.astro';
+import { whatsappUrl } from '../data/site';
+
+// Los textos entre corchetes están pendientes de confirmar con SERAC.
+const groups = [
+  {
+    title: 'Experiencia y condición física',
+    items: [
+      {
+        q: '¿Necesito experiencia previa en montaña?',
+        a: 'Depende de la ruta. Para el Pico de Orizaba basta con haber hecho caminatas largas de montaña; la técnica en glaciar la practicamos antes del día de cumbre. Cada ficha de expedición indica el nivel requerido.',
+      },
+      {
+        q: '¿Qué tan en forma tengo que estar?',
+        a: 'Tienes que poder caminar [N] horas con desnivel y mochila. Al reservar recibes un plan de entrenamiento de [N] semanas y un seguimiento de tu avance.',
+      },
+      {
+        q: '¿Hay límite de edad?',
+        a: '[Edad mínima y política para mayores de N años.] En todos los casos pedimos un chequeo médico reciente.',
+      },
+    ],
+  },
+  {
+    title: 'En la montaña',
+    items: [
+      {
+        q: '¿Qué pasa si me afecta la altura?',
+        a: 'El itinerario incluye días de aclimatación y el guía revisa a cada participante a diario. Si los síntomas no mejoran, desciendes acompañado: bajar es el tratamiento más eficaz y nunca te quedas solo.',
+      },
+      {
+        q: '¿Y si el clima no permite hacer cumbre?',
+        a: 'Cada itinerario tiene un día de reserva. Si aun así no es seguro subir, el guía decide no intentarlo. [Política de reembolso o crédito en ese caso.]',
+      },
+      {
+        q: '¿Qué equipo tengo que llevar?',
+        a: 'Al reservar recibes la lista completa. El equipo técnico grupal lo ponemos nosotros; botas, crampones y piolet son personales y se pueden [alquilar / conseguir con nuestra ayuda].',
+      },
+    ],
+  },
+  {
+    title: 'Reservas y pagos',
+    items: [
+      {
+        q: '¿Cómo reservo mi cupo?',
+        a: 'Escríbenos, hacemos una llamada corta para revisar tu experiencia y, si la ruta es para ti, confirmas con un anticipo de USD [MONTO]. El saldo se paga [N] días antes de la salida.',
+      },
+      {
+        q: '¿Qué formas de pago aceptan?',
+        a: '[Transferencia bancaria, tarjeta, otros.] Todos los precios están en USD.',
+      },
+      {
+        q: '¿Puedo cancelar?',
+        a: '[Política de cancelación por plazos.] Te recomendamos un seguro de viaje que cubra cancelación y rescate en altura.',
+      },
+    ],
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: groups.flatMap((g) =>
+    g.items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+  ),
+};
+---
+
+<Base title="Preguntas frecuentes" description="Lo que más nos preguntan quienes van a su primera montaña grande.">
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+  <div class="container section layout">
+    <div class="intro">
+      <p class="eyebrow">Antes de decidir</p>
+      <h1 class="heading-1">Preguntas frecuentes</h1>
+      <p class="muted">Lo que más nos preguntan quienes van a su primera montaña grande. Si tu duda no está aquí, escríbenos.</p>
+      <a href={whatsappUrl} class="btn btn-secondary">Preguntar por WhatsApp</a>
+    </div>
+
+    <div class="groups">
+      {
+        groups.map((g, gi) => (
+          <section aria-labelledby={`g${gi}`}>
+            <h2 id={`g${gi}`} class="eyebrow">{g.title}</h2>
+            {g.items.map((item, ii) => (
+              <details open={gi === 0 && ii === 0}>
+                <summary>
+                  {item.q}
+                  <svg class="chev" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                    <path d="M5 8 L10 13 L15 8" />
+                  </svg>
+                </summary>
+                <p class="muted">{item.a}</p>
+              </details>
+            ))}
+          </section>
+        ))
+      }
+    </div>
+  </div>
+
+  <section class="band" aria-labelledby="cta-title">
+    <div class="container section cta">
+      <h2 id="cta-title" class="heading-2">¿Te quedó alguna duda?</h2>
+      <a href="/#contacto" class="btn btn-primary">Escribirnos</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-16);
+    align-items: flex-start;
+    padding-top: 96px;
+  }
+  .intro {
+    flex: 1 1 300px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  .groups {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  .groups h2 {
+    margin-bottom: var(--space-2);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .chev {
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  details[open] .chev {
+    transform: rotate(180deg);
+  }
+  details p {
+    max-width: 680px;
+    padding-bottom: var(--space-5);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: center;
+    justify-content: space-between;
+  }
+  @media (max-width: 640px) {
+    .layout {
+      padding-top: var(--space-12);
+      gap: var(--space-10);
+    }
+    summary {
+      font-size: 16px;
+    }
+  }
+</style>

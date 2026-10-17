@@ -1,0 +1,326 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import { whatsappUrl } from '../../data/site';
+
+export async function getStaticPaths() {
+  const expediciones = await getCollection('expediciones', (e) => e.data.status === 'abierta');
+  return expediciones.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const facts = [
+  { label: d.altitudeLabel, value: d.altitude },
+  { label: 'Duración', value: d.days },
+  d.gain && { label: 'Desnivel', value: d.gain },
+  d.groupSize && { label: 'Grupo', value: d.groupSize },
+].filter(Boolean) as { label: string; value: string }[];
+---
+
+<Base title={d.title} description={`${d.summary} ${d.altitudeLabel}: ${d.altitude}.`}>
+  <section class="hero" aria-labelledby="exp-title">
+    <Photo label={d.photo} class="hero-bg" height="100%" priority />
+    <div class="container hero-inner">
+      <a href="/#expediciones" class="back">← Todas las expediciones</a>
+      <div class="hero-panel">
+        <p class="eyebrow">{d.country} · {d.kind}</p>
+        <h1 id="exp-title" class="display-xl">{d.title}</h1>
+        <p class="lead">{d.summary} {d.altitude} · salida: {d.departure}.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-label="Datos de la expedición">
+    <dl class="container auto-grid facts" style="--min: 160px">
+      {
+        facts.map((f) => (
+          <div>
+            <dt class="eyebrow">{f.label}</dt>
+            <dd class="stat">{f.value}</dd>
+          </div>
+        ))
+      }
+      <div>
+        <dt class="eyebrow">Nivel</dt>
+        <dd class="level">{d.level}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <div class="container section layout">
+    <div class="main">
+      <section aria-labelledby="ruta-title" class="prose">
+        <h2 id="ruta-title" class="heading-2">La ruta</h2>
+        <Content />
+      </section>
+
+      {
+        d.itinerary.length > 0 && (
+          <section aria-labelledby="itin-title">
+            <h2 id="itin-title" class="heading-2 gap-below">Itinerario</h2>
+            <ol class="itinerary">
+              {d.itinerary.map((day) => (
+                <li>
+                  <span class="day">{day.day}</span>
+                  <div>
+                    <h3>{day.title}</h3>
+                    <p class="muted">{day.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+
+      {
+        (d.includes.length > 0 || d.excludes.length > 0) && (
+          <section aria-labelledby="incl-title" class="auto-grid" style="--min: 240px">
+            <h2 id="incl-title" class="heading-2 full">Qué incluye</h2>
+            <div class="card list-card">
+              <h3 class="eyebrow">Incluido</h3>
+              <ul>{d.includes.map((t) => <li>{t}</li>)}</ul>
+            </div>
+            <div class="card list-card">
+              <h3 class="eyebrow">No incluido</h3>
+              <ul>{d.excludes.map((t) => <li>{t}</li>)}</ul>
+            </div>
+          </section>
+        )
+      }
+
+      {
+        d.risks.length > 0 && (
+          <section aria-labelledby="riesgos-title" class="card risks">
+            <h2 id="riesgos-title" class="heading-2">Riesgos y cómo los reducimos</h2>
+            <dl class="auto-grid" style="--min: 220px">
+              {d.risks.map((r) => (
+                <div>
+                  <dt>{r.name}</dt>
+                  <dd class="muted">{r.mitigation}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )
+      }
+
+      {
+        d.gallery.length > 0 && (
+          <section aria-labelledby="gal-title">
+            <h2 id="gal-title" class="heading-2 gap-below">Galería</h2>
+            <div class="auto-grid" style="--min: 200px; --gap: var(--space-4)">
+              {d.gallery.map((g) => (
+                <Photo label={g} height="180px" radius="md" />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </div>
+
+    <aside class="card booking" aria-labelledby="precio">
+      <p class="eyebrow">Precio por persona</p>
+      <p id="precio" class="price">USD {d.price}</p>
+      <dl class="booking-facts">
+        <div><dt>Salida</dt><dd>{d.departure}</dd></div>
+        {d.returnDate && <div><dt>Regreso</dt><dd>{d.returnDate}</dd></div>}
+        <div><dt>Cupos disponibles</dt><dd>{d.spots}</dd></div>
+        {d.deposit && <div><dt>Anticipo para reservar</dt><dd>USD {d.deposit}</dd></div>}
+      </dl>
+      <a href="/#contacto" class="btn btn-primary">Reservar mi cupo</a>
+      <a href={whatsappUrl} class="btn btn-secondary">Preguntar por WhatsApp</a>
+      <p class="muted note">Antes de confirmar, un guía revisa contigo tu experiencia y el plan de entrenamiento.</p>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    background: var(--placeholder);
+  }
+  .hero :global(.hero-bg) {
+    position: absolute;
+    inset: 0;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+  .hero-inner {
+    position: relative;
+    padding-block: var(--space-8) 96px;
+  }
+  .back {
+    display: inline-block;
+    color: var(--ink);
+    font-size: 14px;
+    padding-block: 12px;
+    margin-bottom: var(--space-16);
+  }
+  .hero-panel {
+    max-width: 720px;
+    background: var(--scrim);
+    padding: var(--space-10);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  @media (max-width: 640px) {
+    .back {
+      margin-bottom: var(--space-8);
+    }
+    .hero-inner {
+      padding-bottom: var(--space-12);
+    }
+    .hero-panel {
+      padding: var(--space-6);
+    }
+  }
+
+  .facts {
+    padding-block: var(--space-8);
+  }
+  .facts dd {
+    margin-top: var(--space-1);
+  }
+  .level {
+    font-size: 18px;
+    font-weight: 600;
+    padding-top: 6px;
+  }
+
+  .layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-12);
+    align-items: flex-start;
+  }
+  .main {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .gap-below {
+    margin-bottom: var(--space-6);
+  }
+  .full {
+    grid-column: 1 / -1;
+  }
+
+  .itinerary {
+    list-style: none;
+    padding: 0;
+  }
+  .itinerary li {
+    display: flex;
+    gap: var(--space-6);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+  .itinerary li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .day {
+    /* Orbitron solo desde 22px (regla del sistema): aquí va la fuente de texto. */
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--link);
+    text-transform: uppercase;
+    width: 80px;
+    flex-shrink: 0;
+    padding-top: 3px;
+  }
+  .itinerary h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+  .itinerary p {
+    font-size: 14px;
+  }
+
+  .list-card {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .list-card ul {
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: 15px;
+  }
+
+  .risks {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: 15px;
+  }
+  .risks dt {
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+
+  .booking {
+    flex: 1 1 320px;
+    min-width: 0;
+    border-color: var(--line-strong);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    position: sticky;
+    top: 104px;
+  }
+  @media (max-width: 960px) {
+    .booking {
+      position: static;
+    }
+  }
+  .price {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 36px;
+    line-height: 1.1;
+  }
+  .booking-facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: 15px;
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-5);
+  }
+  .booking-facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .booking-facts dt {
+    color: var(--ink-muted);
+  }
+  .booking-facts dd {
+    font-weight: 600;
+    text-align: right;
+  }
+  .note {
+    font-size: 13px;
+  }
+</style>

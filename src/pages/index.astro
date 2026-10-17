@@ -1,0 +1,272 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ExpeditionCard from '../components/ExpeditionCard.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Photo from '../components/Photo.astro';
+import { site, whatsappUrl } from '../data/site';
+
+const expediciones = (await getCollection('expediciones')).sort((a, b) => a.data.order - b.data.order);
+
+const stats = [
+  { value: '5,636 m', label: 'Cumbre del Pico de Orizaba' },
+  { value: '[N]', label: 'Expediciones realizadas' },
+  { value: '[N]', label: 'Montañistas acompañados' },
+  { value: '1:[N]', label: 'Guías por participante en cumbre' },
+];
+
+const steps = [
+  { title: 'Evaluación', text: 'Conversamos sobre tu experiencia y condición física para recomendarte la ruta adecuada.' },
+  { title: 'Preparación', text: 'Plan de entrenamiento previo, salidas de práctica y lista de equipo personal revisada contigo.' },
+  { title: 'Expedición', text: 'Viajamos juntos. Logística, aclimatación y ascenso con guías certificados y operadores locales con licencia.' },
+  { title: 'Regreso', text: 'Volvemos a casa con fotos, registro de la ruta y recomendaciones para tu siguiente montaña.' },
+];
+
+const includes = [
+  'Guía certificado de alta montaña',
+  'Logística local y transporte',
+  'Equipo técnico grupal',
+  'Plan de entrenamiento previo',
+  'Días de aclimatación en el itinerario',
+];
+
+const needs = [
+  'Buena condición física (te damos el plan)',
+  'Chequeo médico reciente',
+  'Equipo personal según la lista',
+  'Seguro de viaje con cobertura en altura',
+  'Pasaporte vigente',
+];
+---
+
+<Base>
+  <section class="hero" aria-labelledby="hero-title">
+    <Photo label="Grupo SERAC en el glaciar del Pico de Orizaba" class="hero-bg" height="100%" priority />
+    <div class="container hero-inner">
+      <div class="hero-panel">
+        <p class="eyebrow">Adventure | Mountaineering | Expedition</p>
+        <h1 id="hero-title" class="display-xl">Tu primera montaña grande, bien acompañada</h1>
+        <p class="lead">{site.description}</p>
+        <div class="btn-row">
+          <a href="#expediciones" class="btn btn-primary">Ver expediciones</a>
+          <a href="#seguridad" class="btn btn-secondary">Qué incluye y qué necesitas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="SERAC en cifras" class="stats">
+    <dl class="container auto-grid" style="--min: 200px; --gap: var(--space-8)">
+      {
+        stats.map((s) => (
+          <div>
+            <dt class="muted small">{s.label}</dt>
+            <dd class="stat">{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section id="expediciones" class="container section" aria-labelledby="exp-title">
+    <div class="section-head">
+      <p class="eyebrow">Próximas salidas</p>
+      <h2 id="exp-title" class="heading-1">Expediciones</h2>
+    </div>
+    <div class="auto-grid" style="--min: 300px">
+      {expediciones.map((entry) => <ExpeditionCard entry={entry} />)}
+    </div>
+  </section>
+
+  <section id="como" class="band" aria-labelledby="como-title">
+    <div class="container section">
+      <div class="section-head">
+        <p class="eyebrow">De tu casa a la cumbre</p>
+        <h2 id="como-title" class="heading-1">Cómo trabajamos</h2>
+      </div>
+      <ol class="steps auto-grid" style="--min: 240px; --gap: var(--space-8)">
+        {
+          steps.map((s, i) => (
+            <li>
+              <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.title}</h3>
+              <p class="muted small">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section id="seguridad" class="container section split" aria-labelledby="seg-title">
+    <div class="stack">
+      <p class="eyebrow">Seguridad sin miedo</p>
+      <h2 id="seg-title" class="heading-1">Lo que hacemos para que subas tranquilo</h2>
+      <p class="muted narrow">
+        La alta montaña tiene riesgos reales: altitud, frío y clima cambiante. Te explicamos cada uno antes de salir y cómo
+        los reducimos en la ruta.
+      </p>
+      <Photo label="Guía revisando el equipo del grupo" height="280px" radius="lg" />
+    </div>
+    <div class="auto-grid lists" style="--min: 240px">
+      <div class="card list-card">
+        <h3 class="eyebrow">Incluye</h3>
+        <ul class="icon-list">
+          {
+            includes.map((t) => (
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--link)" stroke-width="1.75" aria-hidden="true"><path d="M4 10.5 L8 14.5 L16 6" /></svg>
+                {t}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="card list-card">
+        <h3 class="eyebrow">Necesitas</h3>
+        <ul class="icon-list">
+          {
+            needs.map((t) => (
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M5 10 H15" /></svg>
+                {t}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto" class="band" aria-labelledby="contacto-title">
+    <div class="container section split">
+      <div class="stack">
+        <p class="eyebrow">Contacto</p>
+        <h2 id="contacto-title" class="heading-1">Hablemos de tu próxima montaña</h2>
+        <p class="muted narrow">Escríbenos y un guía te responde con fechas, requisitos y el plan de preparación.</p>
+        <div class="contact-lines">
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={whatsappUrl}>WhatsApp {site.whatsapp}</a>
+          <span class="muted">{site.city}, Honduras</span>
+        </div>
+      </div>
+      <ContactForm />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    background: var(--placeholder);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero :global(.hero-bg) {
+    position: absolute;
+    inset: 0;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+  .hero-inner {
+    position: relative;
+    padding-block: 128px 96px;
+  }
+  .hero-panel {
+    max-width: 760px;
+    background: var(--scrim);
+    padding: var(--space-10);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .hero-panel .lead {
+    max-width: 600px;
+    margin-bottom: var(--space-3);
+  }
+  @media (max-width: 640px) {
+    .hero-inner {
+      padding-block: 64px 48px;
+    }
+    .hero-panel {
+      padding: var(--space-6);
+    }
+  }
+
+  .stats {
+    border-bottom: 1px solid var(--line);
+  }
+  .stats dl {
+    padding-block: var(--space-10);
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+  .small {
+    font-size: 14px;
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+  }
+  .steps li {
+    border-top: 1px solid var(--line-strong);
+    padding-top: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .step-n {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--link);
+  }
+  .steps h3 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .narrow {
+    max-width: 480px;
+  }
+  .lists {
+    align-content: start;
+  }
+  .list-card {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .icon-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: 15px;
+  }
+  .icon-list li {
+    display: flex;
+    gap: 10px;
+  }
+  .icon-list svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .contact-lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: 15px;
+  }
+</style>

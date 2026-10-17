@@ -1,0 +1,172 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+
+const values = [
+  { title: 'Preparación antes que épica', text: 'La cumbre se gana en los meses de entrenamiento. Te acompañamos desde ahí.' },
+  { title: 'Datos claros', text: 'Altitud, días, desnivel, precio y riesgos, por escrito y antes de pagar.' },
+  { title: 'Volver es la meta', text: 'Cada salida tiene hora límite de retorno. Darse la vuelta a tiempo también es éxito.' },
+  { title: 'Trabajo con locales', text: 'Operamos con guías y operadores locales con licencia en cada país.' },
+];
+
+// TODO: completar con los datos reales del equipo.
+const team = [
+  { name: '[Nombre Apellido]', role: 'Fundador · Guía de alta montaña', bio: '[Certificación] · Cumbres: [lista breve]' },
+  { name: '[Nombre Apellido]', role: 'Guía · Logística', bio: '[Certificación] · Cumbres: [lista breve]' },
+  { name: '[Nombre Apellido]', role: 'Preparación física', bio: '[Certificación] · [Especialidad]' },
+];
+
+const partners = ['[Logo certificación]', '[Operador México]', '[Operador Perú]'];
+---
+
+<Base title="Nosotros" description="Montañistas hondureños que acompañan a otros a subir su primera montaña grande.">
+  <section class="container section split intro" aria-labelledby="nos-title">
+    <div class="stack">
+      <p class="eyebrow">Nosotros</p>
+      <h1 id="nos-title" class="display-xl">Montañistas hondureños que acompañan a otros a subir</h1>
+      <p class="lead">
+        SERAC nace en Honduras para que más centroamericanos lleguen a la alta montaña con preparación, información clara y
+        un equipo que ya conoce la ruta.
+      </p>
+      <p class="muted">
+        Un serac es un bloque de hielo glaciar: lo encuentras arriba, donde el aire es frío y limpio y cada paso se
+        planifica. Así trabajamos.
+      </p>
+    </div>
+    <Photo label="Equipo SERAC en cumbre" height="420px" radius="lg" />
+  </section>
+
+  <section class="band" aria-labelledby="val-title">
+    <div class="container section">
+      <h2 id="val-title" class="heading-1 section-head">En qué creemos</h2>
+      <div class="auto-grid values" style="--min: 240px; --gap: var(--space-8)">
+        {
+          values.map((v) => (
+            <div>
+              <h3>{v.title}</h3>
+              <p class="muted">{v.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="container section" aria-labelledby="eq-title">
+    <div class="section-head">
+      <p class="eyebrow">El equipo</p>
+      <h2 id="eq-title" class="heading-1">Guías</h2>
+    </div>
+    <div class="auto-grid" style="--min: 260px">
+      {
+        team.map((p) => (
+          <article class="card person">
+            <Photo label="Retrato" height="280px" />
+            <div class="person-body">
+              <h3>{p.name}</h3>
+              <p class="role">{p.role}</p>
+              <p class="muted small">{p.bio}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="partners-band" aria-labelledby="cert-title">
+    <div class="container section split">
+      <div class="stack">
+        <h2 id="cert-title" class="heading-2">Certificaciones y aliados</h2>
+        <p class="muted">
+          Formación en primeros auxilios en zonas remotas, rescate en glaciar y operadores con licencia en cada destino.
+        </p>
+      </div>
+      <ul class="auto-grid partners" style="--min: 160px; --gap: var(--space-4)">
+        {partners.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="cta-title">
+    <div class="container section cta">
+      <h2 id="cta-title" class="heading-2">¿Subimos juntos?</h2>
+      <div class="btn-row">
+        <a href="/#expediciones" class="btn btn-primary">Ver expediciones</a>
+        <a href="/preguntas/" class="btn btn-secondary">Preguntas frecuentes</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    align-items: center;
+    padding-top: 96px;
+  }
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .values > div {
+    border-top: 1px solid var(--line-strong);
+    padding-top: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .values h3,
+  .person h3 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .values p {
+    font-size: 15px;
+  }
+  .person {
+    overflow: hidden;
+  }
+  .person-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .role {
+    font-size: 14px;
+    color: var(--link);
+    margin-bottom: var(--space-2);
+  }
+  .small {
+    font-size: 14px;
+  }
+  .partners-band {
+    border-top: 1px solid var(--line);
+  }
+  .partners-band .split {
+    align-items: center;
+  }
+  .partners {
+    list-style: none;
+    padding: 0;
+  }
+  .partners li {
+    height: 80px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-align: center;
+    padding: var(--space-2);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>

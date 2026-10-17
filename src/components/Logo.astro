@@ -1,0 +1,38 @@
+---
+// Isotipo provisional (picos + arco) y palabra SERAC.
+// TODO: reemplazar por el SVG maestro del logotipo cuando exista.
+interface Props {
+  withTagline?: boolean;
+}
+const { withTagline = false } = Astro.props;
+---
+
+<span class="logo">
+  <span class="mark">
+    <svg width="40" height="28" viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2 22 L12 8 L18 15 L24 4 L32 14 L38 22"></path>
+      <path d="M4 26 Q20 19 36 26"></path>
+    </svg>
+    <span class="word">SERAC</span>
+  </span>
+  {withTagline && <span class="eyebrow">Adventure | Mountaineering | Expedition</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .word {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+  }
+</style>

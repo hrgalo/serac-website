@@ -1,0 +1,48 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container inner">
+    <Logo withTagline />
+    <ul class="links">
+      <li><a href={site.instagram}>Instagram</a></li>
+      <li><a href={site.facebook}>Facebook</a></li>
+      <li><a href="/preguntas/">Preguntas frecuentes</a></li>
+    </ul>
+    <p class="copy muted">© {year} SERAC. Honduras.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-block: var(--space-10);
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    font-size: 14px;
+  }
+  .links a {
+    display: inline-block;
+    color: var(--ink);
+    padding-block: 12px;
+  }
+  .copy {
+    width: 100%;
+    font-size: 12px;
+  }
+</style>
